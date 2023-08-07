@@ -43,6 +43,7 @@ function fuzzy_brew_install() {
     local inst=$(brew formulae | fzf --query="$1" -m --preview $FB_FORMULA_PREVIEW --bind $FB_FORMULA_BIND)
 
     if [[ $inst ]]; then
+        echo ">>> Installing $inst";
         for prog in $(echo $inst); do; brew install $prog; done;
     fi
 }
@@ -55,6 +56,7 @@ function fuzzy_brew_remove() {
     local uninst=$(brew leaves | fzf --query="$1" -m --preview $FB_FORMULA_PREVIEW --bind $FB_FORMULA_BIND)
 
     if [[ $uninst ]]; then
+        echo ">>> Uninstalling $uninst";
         for prog in $(echo $uninst); do;
             brew remove $prog;
         done;
@@ -68,6 +70,7 @@ function fuzzy_cask_install() {
     local inst=$(brew casks | fzf --query="$1" -m --preview $FB_CASK_PREVIEW --bind $FB_CASK_BIND)
 
     if [[ $inst ]]; then
+        echo ">>> Installing $inst";
         for prog in $(echo $inst); do; brew install --cask $prog; done;
     fi
 }
@@ -80,6 +83,7 @@ function fuzzy_cask_remove() {
     local inst=$(brew list --cask | fzf --query="$1" -m --preview $FB_CASK_PREVIEW --bind $FB_CASK_BIND)
 
     if [[ $inst ]]; then
+        echo ">>> Removing $inst";
         for prog in $(echo $inst); do; brew remove --cask $prog; done;
     fi
 }
@@ -92,9 +96,9 @@ function fuzzy_brew_upgrade(){
     # otherwise.
     # 支持formula即可，cask使用单独的扩展
     local outdated=$(brew outdated --formula | fzf --query="$1" --multi --preview $FB_CASK_PREVIEW --bind 'ctrl-a:select-all+accept');
-    echo "upgrading $outdated";
 
     if [[ -n "$outdated" ]]; then
+        echo ">>> Upgrading $outdated";
         for prog in $(echo $outdated);
         do
             brew upgrade $prog;
