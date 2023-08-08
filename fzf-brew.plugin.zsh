@@ -63,6 +63,25 @@ function fuzzy_brew_remove() {
     fi
 }
 
+function fuzzy_brew_upgrade(){
+    # Usage: brew outdated [options] [formula|cask ...]
+    #
+    # List installed casks and formulae that have an updated version available. By
+    # default, version information is displayed in interactive shells, and suppressed
+    # otherwise.
+    # 支持formula即可，cask使用单独的扩展
+    local outdated=$(brew outdated --formula | fzf --query="$1" --multi --preview $FB_FORMULA_PREVIEW --bind 'ctrl-a:select-all+accept');
+
+    if [[ -n "$outdated" ]]; then
+        echo ">>> Upgrading $outdated";
+        for prog in $(echo $outdated);
+        do
+            brew upgrade $prog;
+        done
+    fi
+}
+
+
 function fuzzy_cask_install() {
     # Usage: brew casks
     #
@@ -85,24 +104,6 @@ function fuzzy_cask_remove() {
     if [[ $inst ]]; then
         echo ">>> Removing $inst";
         for prog in $(echo $inst); do; brew remove --cask $prog; done;
-    fi
-}
-
-function fuzzy_brew_upgrade(){
-    # Usage: brew outdated [options] [formula|cask ...]
-    #
-    # List installed casks and formulae that have an updated version available. By
-    # default, version information is displayed in interactive shells, and suppressed
-    # otherwise.
-    # 支持formula即可，cask使用单独的扩展
-    local outdated=$(brew outdated --formula | fzf --query="$1" --multi --preview $FB_CASK_PREVIEW --bind 'ctrl-a:select-all+accept');
-
-    if [[ -n "$outdated" ]]; then
-        echo ">>> Upgrading $outdated";
-        for prog in $(echo $outdated);
-        do
-            brew upgrade $prog;
-        done
     fi
 }
 
